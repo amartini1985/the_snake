@@ -102,21 +102,23 @@ class Snake(GameObject):
 
     def get_head_position(self):
         """Метод определение положения головы змейки."""
-        direction_x = self.direction[0] * GRID_SIZE
-        direction_y = self.direction[1] * GRID_SIZE
-        if ((direction_x + self.positions[0][0]) < SCREEN_WIDTH and
-           (direction_x + self.positions[0][0]) >= 0):
-            position_x = direction_x + self.positions[0][0]
-        elif ((direction_x + self.positions[0][0]) >= SCREEN_WIDTH and
-              (direction_x + self.positions[0][0]) >= 0):
+        direct_x = self.direction[0] * GRID_SIZE
+        direct_y = self.direction[1] * GRID_SIZE
+        current_x = self.positions[0][0]
+        current_y = self.positions[0][1]
+        if direct_x + current_x < SCREEN_WIDTH and direct_x + current_x >= 0:
+            position_x = direct_x + current_x
+        elif (
+            direct_x + current_x >= SCREEN_WIDTH and direct_x + current_x >= 0
+        ):
             position_x = 0
         else:
             position_x = SCREEN_WIDTH - GRID_SIZE
-        if ((direction_y + self.positions[0][1]) < SCREEN_HEIGHT and 
-           (direction_y + self.positions[0][1]) >= 0):
-            position_y = direction_y + self.positions[0][1]
-        elif ((direction_y + self.positions[0][1]) >= SCREEN_HEIGHT and 
-              (direction_y + self.positions[0][1]) >= 0):
+        if direct_y + current_y < SCREEN_HEIGHT and direct_y + current_y >= 0:
+            position_y = direct_y + current_y
+        elif (
+            direct_y + current_y >= SCREEN_HEIGHT and direct_y + current_y >= 0
+        ):
             position_y = 0
         else:
             position_y = SCREEN_HEIGHT - GRID_SIZE
@@ -197,16 +199,17 @@ def main():
     """Функция основного игрового процесса."""
     pygame.init()
     apple = Apple()
-    bad_apple = Apple((0, 0, 255))
+    bad_app = Apple((0, 0, 255))
     stone = Apple((255, 255, 255))
-    while bad_apple.position == apple.position:
-        bad_apple.position = bad_apple.randomize_position()
-    while ((stone.position == apple.position) or
-           (stone.position == bad_apple.position)):
+    while bad_app.position == apple.position:
+        bad_app.position = bad_app.randomize_position()
+    while (
+        stone.position == apple.position or stone.position == bad_app.position
+    ):
         stone.position = stone.randomize_position()
     snake = Snake()
     apple.draw()
-    bad_apple.draw()
+    bad_app.draw()
     snake.draw()
     stone.draw()
     while True:
@@ -215,7 +218,7 @@ def main():
         snake.update_direction()
         snake.move()
         apple.draw()
-        bad_apple.draw()
+        bad_app.draw()
         stone.draw()
         snake.draw()
         if snake.positions[0] == apple.position:
@@ -223,9 +226,9 @@ def main():
             apple.draw()
             snake.add_body()
             snake.length += 1
-        if snake.positions[0] == bad_apple.position:
-            bad_apple.position = bad_apple.randomize_position()
-            bad_apple.draw()
+        if snake.positions[0] == bad_app.position:
+            bad_app.position = bad_app.randomize_position()
+            bad_app.draw()
             if snake.length > 1:
                 snake.del_body()
                 snake.length -= 1
@@ -235,11 +238,11 @@ def main():
             stone.position = stone.randomize_position()
             stone.draw()
             del snake
-            snake = Snake((0, 255, 0))
+            snake = Snake()
         if snake.reset():
             snake.kill_snake_body()
             del snake
-            snake = Snake((0, 255, 0))
+            snake = Snake()
         pygame.display.update()
 
 
