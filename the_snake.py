@@ -19,7 +19,7 @@ LEFT = (-1, 0)
 RIGHT = (1, 0)
 
 # Цвет фона - черный:
-BOARD_COLOR = (0, 0, 0)
+BOARD_BACKGROUND_COLOR = BLACK_COLOR = (0, 0, 0)
 
 # Цвет границы ячейки
 BORDER_COLOR = (93, 216, 228)
@@ -125,7 +125,7 @@ class Snake(GameObject):
         self.draw_rect(self.positions[0], self.body_color)
 
         if self.last:
-            self.draw_rect(self.last, BOARD_COLOR, BOARD_COLOR)
+            self.draw_rect(self.last, BLACK_COLOR, BLACK_COLOR)
 
     def get_head_position(self):
         """Метод определения положения головы змейки."""
@@ -146,13 +146,13 @@ class Snake(GameObject):
     def kill_snake_body(self):
         """Метод для затирания тела змейки после наползания змейки на себя."""
         for position in self.positions:
-            self.draw_rect(position, BOARD_COLOR, BOARD_COLOR)
+            self.draw_rect(position, BLACK_COLOR, BLACK_COLOR)
 
     def del_element(self):
         """Метод для затирания элемента змеки после наползания на
         "Плохое bad_apple".
         """
-        self.draw_rect(self.positions.pop(), BOARD_COLOR, BOARD_COLOR)
+        self.draw_rect(self.positions.pop(), BLACK_COLOR, BLACK_COLOR)
 
 
 class Apple(GameObject):
@@ -179,7 +179,7 @@ class Apple(GameObject):
 
     def draw_erase(self):
         """Метод для затирания "камня"."""
-        self.draw_rect(self.position, BOARD_COLOR, BOARD_COLOR)
+        self.draw_rect(self.position, BLACK_COLOR, BLACK_COLOR)
 
 
 KEY_PAD = {
