@@ -134,7 +134,7 @@ class Snake(GameObject):
     def reset(self):
         """Метод инициализации новой змейки."""
         self.length = 1
-        self.positions = [SCREEN_CENTER]
+        self.positions = [self.position]
         self.direction = RIGHT
         self.next_direction = None
 
@@ -161,12 +161,16 @@ class Apple(GameObject):
     """
 
     def __init__(
-            self, position=None,
+            self,
+            position=None,
             body_color=APPLE_COLOR,
+            occupied_position=[]
     ):
         super().__init__(position, body_color)
+        self.occupied_position = occupied_position
+        self.randomize_position(occupied_position)
 
-    def randomize_position(self, occupied_position=[None]):
+    def randomize_position(self, occupied_position):
         """Метод определения координат объекта на игровом поле."""
         while True:
             self.position = (choice(GRID_WIDTH_VAL), choice(GRID_HEIGHT_VAL))
@@ -180,18 +184,6 @@ class Apple(GameObject):
     def draw_erase(self):
         """Метод для затирания "камня"."""
         self.draw_rect(self.position, BLACK_COLOR, BLACK_COLOR)
-
-
-KEY_PAD = {
-    (LEFT, pg.K_UP): UP,
-    (RIGHT, pg.K_UP): UP,
-    (UP, pg.K_LEFT): LEFT,
-    (DOWN, pg.K_LEFT): LEFT,
-    (LEFT, pg.K_DOWN): DOWN,
-    (RIGHT, pg.K_DOWN): DOWN,
-    (UP, pg.K_RIGHT): RIGHT,
-    (DOWN, pg.K_RIGHT): RIGHT,
-}
 
 
 def handle_keys(game_object):
@@ -221,18 +213,26 @@ def main():
     text = font.render('Escape', True, BUTTON_TEXT_COLOR)
     screen.blit(text, (SCREEN_WIDTH / 2 - 20, SCREEN_HEIGHT + 45))
     snake = Snake()
-    occupied_position.append(snake.positions)
-    apple = Apple()
-    apple.randomize_position(occupied_position)
+    occupied_position.extend(snake.positions)
+    apple = Apple(occupied_position)
     occupied_position.append(apple.position)
-    bad_app = Apple(body_color=BAD_APPLE_COLOR)
-    bad_app.randomize_position(occupied_position)
+    bad_app = Apple(
+        body_color=BAD_APPLE_COLOR,
+        occupied_position=occupied_position
+    )
     occupied_position.append(bad_app.position)
-    stone = Apple(body_color=STONE_COLOR)
-    stone.randomize_position(occupied_position)
+    stone = Apple(
+        body_color=STONE_COLOR,
+        occupied_position=occupied_position
+    )
     occupied_position.append(stone.position)
     while True:
         clock.tick(SPEED)
+        occupied_position = []
+        occupied_position.extend(snake.positions)
+        occupied_position.append(apple.position)
+        occupied_position.append(bad_app.position)
+        occupied_position.append(stone.position)
         handle_keys(snake)
         snake.update_direction()
         snake.move()
@@ -257,10 +257,9 @@ def main():
             occupied_position.append(stone.position)
             snake.kill_snake_body()
             snake.reset()
-        if snake.length > 4:
-            if snake.get_head_position() in snake.positions[1:]:
-                snake.kill_snake_body()
-                snake.reset()
+        elif snake.get_head_position() in snake.positions[1:]:
+            snake.kill_snake_body()
+            snake.reset()
         apple.draw()
         bad_app.draw()
         stone.draw()
